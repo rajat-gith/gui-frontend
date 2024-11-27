@@ -18,6 +18,8 @@ const ConnectDBForm = () => {
   const { error, loading, dbConn } = conn; // Extract state values
   const [dbType, setDbType] = useState("mysql");
 
+  console.log(error);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -28,13 +30,11 @@ const ConnectDBForm = () => {
       user: formData.get("user"),
       password: formData.get("password"),
     };
-
     dispatch(connectDb(data));
   };
 
   const fetchDatabases = () => {
     console.log(dbConn);
-
     if (dbConn) {
       dispatch(queryRun("SHOW DATABASES"));
     }
@@ -105,7 +105,7 @@ const ConnectDBForm = () => {
 
       {error && (
         <Box mt={2} color="error.main">
-          {error}
+          {error?.data?.data}
         </Box>
       )}
     </Box>

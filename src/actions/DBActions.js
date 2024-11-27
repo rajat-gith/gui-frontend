@@ -2,9 +2,12 @@ import {
   CONNECT_DB_SUCCESS,
   CONNECT_DB_FAIL,
   CONNECT_DB_REQUEST,
-  QUERRY_RUN_REQUEST,
-  QUERRY_RUN_SUCCESS,
-  QUERRY_RUN_FAIL,
+  SYSTEM_QUERY_FAIL,
+  SYSTEM_QUERY_REQUEST,
+  SYSTEM_QUERY_SUCCESS,
+  USER_QUERY_FAIL,
+  USER_QUERY_REQUEST,
+  USER_QUERY_SUCCESS,
 } from "../constants/DBConstants";
 import axios from "axios";
 
@@ -50,34 +53,39 @@ export const connectDb = (connectDbCreds) => async (dispatch) => {
   }
 };
 
-export const queryRun = (query) => async (dispatch) => {
-  try {
-    dispatch({
-      type: QUERRY_RUN_REQUEST,
-    });
+export const queryRun =
+  (query, queryType = "user") =>
+  async (dispatch) => {
+    const isSystemQuery =
+      query.toLowerCase().includes("show databases") ||
+      query.toLowerCase().includes("show tables") ||
+      query.toLowerCase().includes("describe");
+    try {
+      dispatch({
+        type: isSystemQuery ? SYSTEM_QUERY_REQUEST : USER_QUERY_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        "Content-type": "application/json",
-      },
-    };
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
 
-    const { data } = await axios.post(
-      `${BASE_URL}/api/query`,
-      {
-        query: query,
-      },
-      config
-    );
-
-    dispatch({
-      type: QUERRY_RUN_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: QUERRY_RUN_FAIL,
-      payload: error.response,
-    });
-  }
-};
+      const { data } = await axios.post(
+        `${BASE_URL}/api/query`,
+        {
+          query: query,
+        },
+        config
+      );
+      dispatch({
+        type: isSystemQuery ? SYSTEM_QUERY_SUCCESS : USER_QUERY_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: isSystemQuery ? SYSTEM_QUERY_FAIL : USER_QUERY_FAIL,
+        payload: error.response,
+      });
+    }
+  };

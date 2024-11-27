@@ -2,9 +2,12 @@ import {
   CONNECT_DB_FAIL,
   CONNECT_DB_REQUEST,
   CONNECT_DB_SUCCESS,
-  QUERRY_RUN_FAIL,
-  QUERRY_RUN_REQUEST,
-  QUERRY_RUN_SUCCESS,
+  SYSTEM_QUERY_FAIL,
+  SYSTEM_QUERY_REQUEST,
+  SYSTEM_QUERY_SUCCESS,
+  USER_QUERY_FAIL,
+  USER_QUERY_REQUEST,
+  USER_QUERY_SUCCESS,
 } from "../constants/DBConstants";
 
 export const dbConnectReducer = (state = {}, action) => {
@@ -24,46 +27,74 @@ export const dbConnectReducer = (state = {}, action) => {
 };
 
 const initialState = {
-  systemQueryResult: null,
-  userQueryResult: null,
-  loading: false,
-  error: null,
+  systemQuery: {
+    loading: false,
+    data: null,
+    error: null,
+  },
+  userQuery: {
+    loading: false,
+    data: null,
+    error: null,
+  },
 };
 
-export const queryReducer = (state = initialState, action) => {
+export const queryRunReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "QUERY_REQUEST":
+    case SYSTEM_QUERY_REQUEST:
       return {
         ...state,
-        loading: true,
+        systemQuery: {
+          ...state.systemQuery,
+          loading: true,
+        },
       };
-    case "QUERY_SUCCESS":
-      // Check if this is a system query (database/tables) or user query
-      if (
-        action.payload.data[0] &&
-        (Object.keys(action.payload.data[0])[0] === "Database" ||
-          Object.keys(action.payload.data[0])[0].split("_")[0] === "Tables")
-      ) {
-        return {
-          ...state,
-          systemQueryResult: action.payload,
-          loading: false,
-        };
-      } else {
-        return {
-          ...state,
-          userQueryResult: action.payload,
-          loading: false,
-        };
-      }
-    case "QUERY_FAILURE":
+    case SYSTEM_QUERY_SUCCESS:
       return {
         ...state,
-        error: action.payload,
-        loading: false,
+        systemQuery: {
+          loading: false,
+          data: action.payload,
+          error: null,
+        },
       };
-    case "CLEAR_QUERIES":
-      return initialState;
+    case SYSTEM_QUERY_FAIL:
+      return {
+        ...state,
+        systemQuery: {
+          loading: false,
+          data: null,
+          error: action.payload,
+        },
+      };
+
+    case USER_QUERY_REQUEST:
+      return {
+        ...state,
+        userQuery: {
+          ...state.userQuery,
+          loading: true,
+        },
+      };
+    case USER_QUERY_SUCCESS:
+      return {
+        ...state,
+        userQuery: {
+          loading: false,
+          data: action.payload,
+          error: null,
+        },
+      };
+    case USER_QUERY_FAIL:
+      return {
+        ...state,
+        userQuery: {
+          loading: false,
+          data: null,
+          error: action.payload,
+        },
+      };
+
     default:
       return state;
   }
