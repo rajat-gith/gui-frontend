@@ -11,14 +11,13 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { connectDb, queryRun } from "../actions/DBActions";
+import { setEncryptedItem } from "../utils/storageUtils";
 
 const ConnectDBForm = () => {
   const dispatch = useDispatch();
   const conn = useSelector((state) => state.connectDb);
-  const { error, loading, dbConn } = conn; // Extract state values
+  const { error, loading, dbConn } = conn;
   const [dbType, setDbType] = useState("mysql");
-
-  console.log(error);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,11 +29,11 @@ const ConnectDBForm = () => {
       user: formData.get("user"),
       password: formData.get("password"),
     };
+    setEncryptedItem("conn", JSON.stringify(data));
     dispatch(connectDb(data));
   };
 
   const fetchDatabases = () => {
-    console.log(dbConn);
     if (dbConn) {
       dispatch(queryRun("SHOW DATABASES"));
     }
@@ -57,6 +56,7 @@ const ConnectDBForm = () => {
               value={dbType}
               onChange={(e) => setDbType(e.target.value)}
               name="dbType"
+              disabled={loading}
             >
               <MenuItem value="mysql">MySQL</MenuItem>
             </Select>
@@ -64,7 +64,13 @@ const ConnectDBForm = () => {
         </Grid>
 
         <Grid item xs={2}>
-          <TextField label="Host" name="host" fullWidth required />
+          <TextField
+            label="Host"
+            name="host"
+            fullWidth
+            required
+            disabled={loading}
+          />
         </Grid>
 
         <Grid item xs={2}>
@@ -74,11 +80,18 @@ const ConnectDBForm = () => {
             fullWidth
             required
             type="number"
+            disabled={loading}
           />
         </Grid>
 
         <Grid item xs={2}>
-          <TextField label="User" name="user" fullWidth required />
+          <TextField
+            label="User"
+            name="user"
+            fullWidth
+            required
+            disabled={loading}
+          />
         </Grid>
 
         <Grid item xs={2}>
@@ -88,6 +101,7 @@ const ConnectDBForm = () => {
             fullWidth
             required
             type="password"
+            disabled={loading}
           />
         </Grid>
 
