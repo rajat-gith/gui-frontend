@@ -8,12 +8,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Modal,
+  Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { connectDb, queryRun } from "../actions/DBActions";
 import { setEncryptedItem } from "../utils/storageUtils";
 
-const ConnectDBForm = () => {
+const ConnectDBForm = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const conn = useSelector((state) => state.connectDb);
   const { error, loading, dbConn } = conn;
@@ -31,6 +33,11 @@ const ConnectDBForm = () => {
     };
     setEncryptedItem("conn", JSON.stringify(data));
     dispatch(connectDb(data));
+
+    // Optional: Close modal on successful connection
+    if (!error) {
+      onClose();
+    }
   };
 
   const fetchDatabases = () => {
@@ -45,84 +52,234 @@ const ConnectDBForm = () => {
     }
   }, [dbConn]);
 
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 600,
+    bgcolor: "var(--background-color)",
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+  };
+
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={2}>
-          <FormControl fullWidth>
-            <InputLabel id="dbType-label">DB Type</InputLabel>
-            <Select
-              labelId="dbType-label"
-              value={dbType}
-              onChange={(e) => setDbType(e.target.value)}
-              name="dbType"
-              disabled={loading}
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="database-connection-modal"
+      aria-describedby="database-connection-form"
+    >
+      <Box sx={modalStyle}>
+        <Typography
+          id="database-connection-modal"
+          variant="h6"
+          component="h2"
+          sx={{
+            color: "var(--primary-text-color)",
+            mb: 2,
+            textAlign: "center",
+          }}
+        >
+          Database Connection
+        </Typography>
+        <Box
+          sx={{
+            "& .MuiInputBase-root": {
+              bgcolor: "var(--background-color)",
+              color: "var(--primary-text-color)",
+            },
+          }}
+          component="form"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <InputLabel
+                  id="dbType-label"
+                  sx={{
+                    color: "var(--secondary-text-color)",
+                    fontWeight: "bold",
+                    fontFamily: "Arial",
+                    "&.Mui-focused": {
+                      color: "var(--button-background)",
+                    },
+                  }}
+                >
+                  DB Type
+                </InputLabel>
+                <Select
+                  labelId="dbType-label"
+                  value={dbType}
+                  onChange={(e) => setDbType(e.target.value)}
+                  name="dbType"
+                  disabled={loading}
+                  sx={{
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-background)",
+                      borderWidth: "2px",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-hover-background)",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-hover-background)",
+                    },
+                    color: "var(--primary-text-color)",
+                    fontFamily: "Arial",
+                    fontWeight: "bold",
+                    backgroundColor: "var(--background-color)",
+                  }}
+                >
+                  <MenuItem value="mysql">MySQL</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="Host"
+                name="host"
+                fullWidth
+                required
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    color: "var(--primary-text-color)",
+                    fontFamily: "Arial",
+                    fontWeight: "bold",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-background)",
+                      borderWidth: "2px",
+                    },
+                  },
+                  "& .MuiInputLabel-outlined": {
+                    color: "var(--secondary-text-color)",
+                    fontWeight: "bold",
+                  },
+                }}
+                disabled={loading}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="Port"
+                name="port"
+                fullWidth
+                required
+                type="number"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    color: "var(--primary-text-color)",
+                    fontFamily: "Arial",
+                    fontWeight: "bold",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-background)",
+                      borderWidth: "2px",
+                    },
+                  },
+                  "& .MuiInputLabel-outlined": {
+                    color: "var(--secondary-text-color)",
+                    fontWeight: "bold",
+                  },
+                }}
+                disabled={loading}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="User"
+                name="user"
+                fullWidth
+                required
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    color: "var(--primary-text-color)",
+                    fontFamily: "Arial",
+                    fontWeight: "bold",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-background)",
+                      borderWidth: "2px",
+                    },
+                  },
+                  "& .MuiInputLabel-outlined": {
+                    color: "var(--secondary-text-color)",
+                    fontWeight: "bold",
+                  },
+                }}
+                disabled={loading}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                label="Password"
+                name="password"
+                fullWidth
+                required
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    color: "var(--primary-text-color)",
+                    fontFamily: "Arial",
+                    fontWeight: "bold",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "var(--button-background)",
+                      borderWidth: "2px",
+                    },
+                  },
+                  "& .MuiInputLabel-outlined": {
+                    color: "var(--secondary-text-color)",
+                    fontWeight: "bold",
+                  },
+                }}
+                type="password"
+                disabled={loading}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={loading}
+                sx={{
+                  mt: 2,
+                  backgroundColor: "var(--button-background)",
+                  color: "var(--button-text-color)",
+                  "&:hover": {
+                    backgroundColor: "var(--button-hover-background)",
+                  },
+                  "&.Mui-disabled": {
+                    backgroundColor: "var(--suggest-button-background)",
+                    color: "var(--button-text-color)",
+                  },
+                }}
+              >
+                {loading ? "Connecting..." : "Submit"}
+              </Button>
+            </Grid>
+          </Grid>
+
+          {error && (
+            <Box
+              mt={2}
+              sx={{
+                color: "var(--error-color)",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
             >
-              <MenuItem value="mysql">MySQL</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={2}>
-          <TextField
-            label="Host"
-            name="host"
-            fullWidth
-            required
-            disabled={loading}
-          />
-        </Grid>
-
-        <Grid item xs={2}>
-          <TextField
-            label="Port"
-            name="port"
-            fullWidth
-            required
-            type="number"
-            disabled={loading}
-          />
-        </Grid>
-
-        <Grid item xs={2}>
-          <TextField
-            label="User"
-            name="user"
-            fullWidth
-            required
-            disabled={loading}
-          />
-        </Grid>
-
-        <Grid item xs={2}>
-          <TextField
-            label="Password"
-            name="password"
-            fullWidth
-            required
-            type="password"
-            disabled={loading}
-          />
-        </Grid>
-
-        <Grid item xs={2}>
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={loading}
-          >
-            {loading ? "Connecting..." : "Submit"}
-          </Button>
-        </Grid>
-      </Grid>
-
-      {error && (
-        <Box mt={2} color="error.main">
-          {error?.data?.data}
+              {error?.data?.data}
+            </Box>
+          )}
         </Box>
-      )}
-    </Box>
+      </Box>
+    </Modal>
   );
 };
 

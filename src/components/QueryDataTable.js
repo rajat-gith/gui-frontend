@@ -17,6 +17,7 @@ const QueryDataTable = ({ data }) => {
   if (!data || data.length === 0) {
     return <div>No data to display</div>;
   }
+
   const columns = Object.keys(data[0]);
 
   const handleChangePage = (event, newPage) => {
@@ -29,12 +30,22 @@ const QueryDataTable = ({ data }) => {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
+    <TableContainer
+      component={Paper}
+      sx={{ backgroundColor: "var(--card-background)" }}
+    >
+      <Table sx={{ color: "var(--primary-text-color)" }}>
+        <TableHead sx={{ backgroundColor: "var(--sidebar-background)" }}>
           <TableRow>
             {columns.map((col) => (
-              <TableCell key={col} align="center">
+              <TableCell
+                key={col}
+                align="center"
+                sx={{
+                  color: "var(--primary-text-color)",
+                  borderBottom: "1px solid var(--border-color)",
+                }}
+              >
                 {col}
               </TableCell>
             ))}
@@ -44,9 +55,23 @@ const QueryDataTable = ({ data }) => {
           {data
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((row, index) => (
-              <TableRow key={index}>
+              <TableRow
+                key={index}
+                sx={{
+                  "&:nth-of-type(odd)": {
+                    backgroundColor: "var(--hover-effect)",
+                  },
+                }}
+              >
                 {columns.map((col) => (
-                  <TableCell key={col} align="center">
+                  <TableCell
+                    key={col}
+                    align="center"
+                    sx={{
+                      color: "var(--primary-text-color)",
+                      borderBottom: "1px solid var(--border-color)",
+                    }}
+                  >
                     {row[col]}
                   </TableCell>
                 ))}
@@ -62,6 +87,11 @@ const QueryDataTable = ({ data }) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          backgroundColor: "var(--card-background)",
+          color: "var(--primary-text-color)",
+          borderTop: "1px solid var(--border-color)",
+        }}
       />
     </TableContainer>
   );

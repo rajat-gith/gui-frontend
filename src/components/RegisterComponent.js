@@ -37,7 +37,6 @@ const RegisterComponent = () => {
 
   useEffect(() => {
     if (userInfo) {
-      console.log(userInfo);
       if (userInfo.status === "ok") {
         navigate("/main");
       } else {

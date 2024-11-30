@@ -6,10 +6,12 @@ const QueryHelper = ({
   userPrompt,
   setUserPrompt,
   executeQueryHelp,
+  responseLoading,
 }) => {
   useEffect(() => {
     console.log(isTableSelected);
   }, [isTableSelected]);
+
   return (
     <Box
       sx={{
@@ -17,15 +19,31 @@ const QueryHelper = ({
         alignItems: "center",
         justifyContent: "flex-start",
         padding: "16px",
-        backgroundColor: "#f9f9f9",
+        backgroundColor: "var(--card-background)",
         borderRadius: "8px",
+        color: "var(--primary-text-color)",
       }}
     >
       <TextField
         label="Enter your question"
         variant="outlined"
         fullWidth
-        sx={{ marginRight: "16px" }}
+        sx={{
+          marginRight: "16px",
+          "& .MuiOutlinedInput-root": {
+            color: "var(--primary-text-color)",
+            "& fieldset": {
+              borderColor: "var(--border-color)",
+            },
+            "&:hover fieldset": {
+              borderColor: "var(--button-hover-background)",
+            },
+          },
+          "& .MuiInputLabel-root": {
+            color: "var(--secondary-text-color)",
+          },
+        }}
+        disabled={responseLoading}
         value={userPrompt}
         onChange={(e) => setUserPrompt(e.target.value)}
       />
@@ -34,11 +52,11 @@ const QueryHelper = ({
           <Button
             sx={{
               padding: "10px 24px",
-              backgroundColor: "#1976d2",
-              color: "white",
-              "&:hover": { backgroundColor: "#1565c0" },
+              backgroundColor: "var(--button-background)",
+              color: "var(--button-text-color)",
+              "&:hover": { backgroundColor: "var(--button-hover-background)" },
             }}
-            disabled={!isTableSelected}
+            disabled={!isTableSelected || responseLoading}
             variant="contained"
             onClick={() => executeQueryHelp(userPrompt)}
           >

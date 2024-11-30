@@ -15,10 +15,12 @@ const DatabaseSidebar = ({
     <Box
       sx={{
         width: "25%",
-        backgroundColor: "#f4f4f4",
-        borderRight: "1px solid #ccc",
+        backgroundColor: "var(--sidebar-background)",
+        color: "var(--primary-text-color)",
+        borderRight: "1px solid var(--border-color)",
         padding: "16px",
         overflowY: "auto",
+        transition: "all 0.3s ease-in-out",
       }}
     >
       <Button
@@ -35,18 +37,27 @@ const DatabaseSidebar = ({
           sx={{
             cursor: "pointer",
             padding: "8px",
-            border: "1px solid gray",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
             marginBottom: "8px",
+            borderRadius: "30px",
+            border:
+              selectedDb === db["Database"]
+                ? "2px solid green"
+                : "1px solid var(--border-color)",
           }}
         >
-          {db["Database"]}
+          <Box>{db["Database"]}</Box>
           {tablesMap[db["Database"]]?.map((table) => (
             <Box
               key={table[`Tables_in_${db["Database"]}`]}
               sx={{
                 padding: "4px",
-                marginLeft: "16px",
-                border: "1px solid lightgray",
+                marginBottom: "0.5rem",
+                border: "1px solid var(--border-color)",
+                borderRadius: "40px",
+                wordWrap: "break-word",
                 display: selectedDb === db["Database"] ? "block" : "none",
               }}
               onClick={() =>

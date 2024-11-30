@@ -12,11 +12,13 @@ const AuthScreen = () => {
 
   return (
     <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100vh"
-      bgcolor="#f5f5f5"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        bgcolor: "#f5f5f5",
+      }}
     >
       <Paper elevation={3} sx={{ width: 400, padding: 3 }}>
         <Typography variant="h5" align="center" gutterBottom>

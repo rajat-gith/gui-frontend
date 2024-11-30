@@ -1,5 +1,49 @@
+:root {
+  --background-color: #121212;
+  --sidebar-background: #1E1E1E;
+  --card-background: #262626;
+
+  --primary-text-color: #E0E0E0;
+  --secondary-text-color: #B0B0B0;
+  --link-text-color: #64B5F6;
+
+  --button-background: #3F51B5;
+  --button-text-color: #FFFFFF;
+  --button-hover-background: #303F9F;
+
+  --suggest-button-background: #757575;
+  --hover-effect: #616161;
+
+  --border-color: #333333;
+  --divider-color: #444444;
+
+  --success-color: #388E3C;
+  --error-color: #D32F2F;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: var(--sidebar-background);
+  /* Scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--hover-effect);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--divider-color);
+}
+
+* {
+  transition: "all 0.3s ease-in-out",
+}
+
 .App {
   text-align: center;
+  border: #303F9F;
+  transition: "all 0.3s ease-in-out",
 }
 
 .App-logo {
@@ -32,6 +76,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

@@ -22,7 +22,6 @@ const dbInfoFromStorage = localStorage.getItem("isDbConnected")
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
   userRegister: { userInfo: userInfoFromStorage },
-  // isDbConnected: { isDbConnected: dbInfoFromStorage },
 };
 
 const middleware = [thunk];

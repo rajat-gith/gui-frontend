@@ -16,7 +16,6 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 export const connectDb = (connectDbCreds) => async (dispatch) => {
   try {
     const { dbType, host, port, user, password, database } = connectDbCreds;
-    console.log(dbType, host, port, user, password);
     dispatch({
       type: CONNECT_DB_REQUEST,
     });

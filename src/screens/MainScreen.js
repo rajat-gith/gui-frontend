@@ -16,8 +16,6 @@ import { getDecryptedItem } from "../utils/storageUtils";
 
 const MainScreen = () => {
   const dispatch = useDispatch();
-
-  const [isConnected, setIsConnected] = useState(false);
   const [dbs, setDbs] = useState();
   const [tablesMap, setTablesMap] = useState({});
   const [selectedDb, setSelectedDb] = useState(null);
@@ -31,6 +29,22 @@ const MainScreen = () => {
   const [copySuccess, setCopySuccess] = useState("");
 
   const isDbConnected = localStorage.getItem("isDbConnected");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+
+  const handleConnect = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleConnectionSuccess = () => {
+    setIsConnected(true);
+    setIsModalOpen(false);
+  };
 
   const { systemQuery, userQuery } = useSelector((state) => state.queryRun);
 
@@ -59,12 +73,12 @@ const MainScreen = () => {
     dispatch(queryRun("SHOW DATABASES"));
   };
 
-  const fetchResult = async (tableSchema, prompt) => {
+  const fetchResult = async (tableSchema, prompt, table) => {
     setResponseLoading(true);
     setResponseError(null);
     const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
       tableSchema
-    )}`;
+    )} of ${table}`;
     try {
       const genAI = new GoogleGenerativeAI(
         process.env.REACT_APP_GEMINI_API_KEY
@@ -95,11 +109,11 @@ const MainScreen = () => {
 
   const handleQueryHelp = () => {
     if (suggestQueryDb.length && suggestQueryTable.length) {
-      console.log("Both the database and table suggestions are available!");
       dispatch(queryRun(`DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`));
     }
     const tableSchema = systemQuery?.data?.data;
-    fetchResult(tableSchema, userPrompt);
+    console.log(tableSchema);
+    fetchResult(tableSchema, userPrompt, suggestQueryTable);
   };
 
   const handleDisconnect = () => {
@@ -121,12 +135,12 @@ const MainScreen = () => {
     );
     dispatch(queryRun(`SHOW TABLES FROM ${db["Database"]}`));
     let connDetails = JSON.parse(getDecryptedItem("conn"));
-    console.log(connDetails);
     connDetails["database"] = db["Database"];
     if (Object.keys(connDetails).length > 0) {
       dispatch(connectDb(connDetails));
     }
   };
+  console.log(selectedDb);
 
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -134,6 +148,7 @@ const MainScreen = () => {
     }
     setTableSelectAlert(false);
   };
+
   const handleCopy = () => {
     if (result) {
       navigator.clipboard
@@ -149,16 +164,27 @@ const MainScreen = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Box
         sx={{
           padding: "16px",
-          borderBottom: "1px solid #ccc",
-          backgroundColor: "#f4f4f4",
+          borderBottom: "1px solid var(--border-color)",
+          bgcolor: "var(--background-color)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         {!isConnected ? (
-          <ConnectDBForm />
+          <Button variant="contained" onClick={handleConnect}>
+            Connect to Database
+          </Button>
         ) : (
           <Button
             variant="contained"
@@ -168,50 +194,86 @@ const MainScreen = () => {
             Disconnect
           </Button>
         )}
+
+        <ConnectDBForm
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          isConnected={isConnected}
+          onDisconnect={handleDisconnect}
+          onConnectionSuccess={handleConnectionSuccess}
+        />
       </Box>
 
-      <Box sx={{ display: "flex", flex: 1 }}>
-        {isDbConnected ? (
+      <Box
+        sx={{
+          overflowY: "scroll",
+          display: "flex",
+          flex: 1,
+          backgroundColor: "var(--background-color)",
+          padding: "16px",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "var(--hover-effect)",
+            borderRadius: "4px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "var(--divider-color)",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "var(--sidebar-background)",
+          },
+        }}
+      >
+        {isDbConnected && (
           <DatabaseSidebar
             dbs={dbs}
             tablesMap={tablesMap}
             selectedDb={selectedDb}
             setSelectedDb={setSelectedDb}
             onReload={handleReloadDb}
-            onDbClick={(db) => handleDbClick(db)}
-            onTableClick={(db, table) => handleTableCLick(db, table)}
+            onDbClick={handleDbClick}
+            onTableClick={handleTableCLick}
           />
-        ) : (
-          ""
         )}
-        <Snackbar
-          open={tableSelectAlert}
-          autoHideDuration={6000}
-          onClose={handleSnackBarClose}
-          message={`${suggestQueryTable} table is selected`}
-          action={
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleSnackBarClose}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          }
-        />
-        <Box sx={{ flex: 1, padding: "16px", overflowY: "auto" }}>
+        <Box
+          sx={{
+            flex: 1,
+            padding: "16px",
+            overflowY: "auto",
+            bgcolor: "var(--background-color)",
+          }}
+        >
           <QueryEditor userQuery={userQuery} dispatch={dispatch} />
           <QueryHelper
             isTableSelected={suggestQueryTable.length > 0}
             userPrompt={userPrompt}
             executeQueryHelp={handleQueryHelp}
             setUserPrompt={setUserPrompt}
+            responseLoading={responseLoading}
           />
           <QuerySuggestion result={result} handleCopy={handleCopy} />
           <QueryOutput userQuery={userQuery} />
         </Box>
       </Box>
+
+      <Snackbar
+        open={tableSelectAlert}
+        autoHideDuration={6000}
+        onClose={handleSnackBarClose}
+        message={`${suggestQueryTable} table is selected`}
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleSnackBarClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </Box>
   );
 };
