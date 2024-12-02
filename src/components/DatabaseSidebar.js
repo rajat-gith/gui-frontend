@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 const DatabaseSidebar = ({
   dbs,
@@ -11,6 +11,7 @@ const DatabaseSidebar = ({
   onTableClick,
 }) => {
   useEffect(() => {}, [tablesMap]);
+
   return (
     <Box
       sx={{
@@ -30,6 +31,7 @@ const DatabaseSidebar = ({
       >
         Reload Databases
       </Button>
+
       {dbs?.map((db) => (
         <Box
           key={db["Database"]}
@@ -46,9 +48,11 @@ const DatabaseSidebar = ({
               selectedDb === db["Database"]
                 ? "2px solid green"
                 : "1px solid var(--border-color)",
+            transition: "all 0.2s ease-in-out",
           }}
         >
           <Box>{db["Database"]}</Box>
+
           {tablesMap[db["Database"]]?.map((table) => (
             <Box
               key={table[`Tables_in_${db["Database"]}`]}
@@ -59,6 +63,7 @@ const DatabaseSidebar = ({
                 borderRadius: "40px",
                 wordWrap: "break-word",
                 display: selectedDb === db["Database"] ? "block" : "none",
+                transition: "opacity 0.2s ease-in-out",
               }}
               onClick={() =>
                 onTableClick(
@@ -72,7 +77,26 @@ const DatabaseSidebar = ({
           ))}
         </Box>
       ))}
+
+      {selectedDb && (
+        <Box
+          sx={{
+            marginTop: "16px",
+            color: "var(--primary-text-color)",
+            "& .MuiAlert-icon": {
+              color: "var(--primary-text-color)",
+            },
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="body1" >
+            Selected Database:
+          </Typography>
+          <Typography variant="h6">{selectedDb}</Typography>
+        </Box>
+      )}
     </Box>
   );
 };
+
 export default DatabaseSidebar;

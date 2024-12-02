@@ -112,7 +112,7 @@ const MainScreen = () => {
       dispatch(queryRun(`DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`));
     }
     const tableSchema = systemQuery?.data?.data;
-    console.log(tableSchema);
+    console.log(suggestQueryTable);
     fetchResult(tableSchema, userPrompt, suggestQueryTable);
   };
 
@@ -130,9 +130,7 @@ const MainScreen = () => {
   };
 
   const handleDbClick = (db) => {
-    setSelectedDb((prevSelectedDb) =>
-      prevSelectedDb === db["Database"] ? null : db["Database"]
-    );
+    setSelectedDb(db["Database"]); 
     dispatch(queryRun(`SHOW TABLES FROM ${db["Database"]}`));
     let connDetails = JSON.parse(getDecryptedItem("conn"));
     connDetails["database"] = db["Database"];
@@ -140,7 +138,8 @@ const MainScreen = () => {
       dispatch(connectDb(connDetails));
     }
   };
-  console.log(selectedDb);
+  console.log(selectedDb)
+  
 
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -252,6 +251,8 @@ const MainScreen = () => {
             executeQueryHelp={handleQueryHelp}
             setUserPrompt={setUserPrompt}
             responseLoading={responseLoading}
+            suggestQueryDb={suggestQueryDb}
+            suggestQueryTable={suggestQueryTable}
           />
           <QuerySuggestion result={result} handleCopy={handleCopy} />
           <QueryOutput userQuery={userQuery} />
