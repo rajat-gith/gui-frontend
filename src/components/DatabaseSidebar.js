@@ -31,6 +31,21 @@ const DatabaseSidebar = ({
       >
         Reload Databases
       </Button>
+      {selectedDb && (
+        <Box
+          sx={{
+            marginTop: "16px",
+            color: "var(--primary-text-color)",
+            "& .MuiAlert-icon": {
+              color: "var(--primary-text-color)",
+            },
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="body1">Selected Database:</Typography>
+          <Typography variant="h6">{selectedDb}</Typography>
+        </Box>
+      )}
 
       {dbs?.map((db) => (
         <Box
@@ -77,24 +92,6 @@ const DatabaseSidebar = ({
           ))}
         </Box>
       ))}
-
-      {selectedDb && (
-        <Box
-          sx={{
-            marginTop: "16px",
-            color: "var(--primary-text-color)",
-            "& .MuiAlert-icon": {
-              color: "var(--primary-text-color)",
-            },
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="body1" >
-            Selected Database:
-          </Typography>
-          <Typography variant="h6">{selectedDb}</Typography>
-        </Box>
-      )}
     </Box>
   );
 };
