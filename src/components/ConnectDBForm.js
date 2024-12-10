@@ -33,12 +33,8 @@ const ConnectDBForm = ({ open, onClose }) => {
     };
     setEncryptedItem("conn", JSON.stringify(data));
     dispatch(connectDb(data));
-
-    // Optional: Close modal on successful connection
-    if (!error) {
-      onClose();
-    }
   };
+
 
   const fetchDatabases = () => {
     if (dbConn) {
@@ -51,6 +47,8 @@ const ConnectDBForm = ({ open, onClose }) => {
       fetchDatabases();
     }
   }, [dbConn]);
+
+  
 
   const modalStyle = {
     position: "absolute",

@@ -3,7 +3,6 @@ import { Box, Typography } from "@mui/material";
 import QueryDataTable from "./QueryDataTable";
 
 const QueryOutput = ({ userQuery }) => {
-  console.log(userQuery);
   return (
     <Box>
       <Typography

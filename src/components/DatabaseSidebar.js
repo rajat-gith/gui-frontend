@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Box, Button, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const DatabaseSidebar = ({
   dbs,
@@ -11,6 +12,7 @@ const DatabaseSidebar = ({
   onTableClick,
 }) => {
   useEffect(() => {}, [tablesMap]);
+  const { loading, dbConn } = useSelector((state) => state.connectDb);
 
   return (
     <Box
@@ -31,6 +33,7 @@ const DatabaseSidebar = ({
       >
         Reload Databases
       </Button>
+
       {selectedDb && (
         <Box
           sx={{
@@ -43,54 +46,66 @@ const DatabaseSidebar = ({
           }}
         >
           <Typography variant="body1">Selected Database:</Typography>
-          <Typography variant="h6">{selectedDb}</Typography>
+          <Typography variant="h6">
+            {!loading
+              ? dbConn?.data?.success
+                ? selectedDb
+                : dbConn?.data
+                ? "Error connecting Db"
+                : "No data available"
+              : "Loading..."}
+          </Typography>
         </Box>
       )}
 
       {dbs?.map((db) => (
-        <Box
-          key={db["Database"]}
-          onClick={() => onDbClick(db)}
-          sx={{
-            cursor: "pointer",
-            padding: "8px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            marginBottom: "8px",
-            borderRadius: "30px",
-            border:
-              selectedDb === db["Database"]
-                ? "2px solid green"
-                : "1px solid var(--border-color)",
-            transition: "all 0.2s ease-in-out",
-          }}
-        >
-          <Box>{db["Database"]}</Box>
+        <React.Fragment key={db["Database"]}>
+          <Box
+            onClick={() => onDbClick(db)}
+            sx={{
+              cursor: "pointer",
+              padding: "8px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              marginBottom: "8px",
+              borderRadius: "30px",
+              border:
+                selectedDb === db["Database"]
+                  ? "2px solid green"
+                  : "1px solid var(--border-color)",
+              transition: "all 0.2s ease-in-out",
+            }}
+          >
+            <Box sx={{ alignItems: "center" }}>{db["Database"]}</Box>
+          </Box>
 
-          {tablesMap[db["Database"]]?.map((table) => (
-            <Box
-              key={table[`Tables_in_${db["Database"]}`]}
-              sx={{
-                padding: "4px",
-                marginBottom: "0.5rem",
-                border: "1px solid var(--border-color)",
-                borderRadius: "40px",
-                wordWrap: "break-word",
-                display: selectedDb === db["Database"] ? "block" : "none",
-                transition: "opacity 0.2s ease-in-out",
-              }}
-              onClick={() =>
-                onTableClick(
-                  db["Database"],
-                  table[`Tables_in_${db["Database"]}`]
-                )
-              }
-            >
-              {table[`Tables_in_${db["Database"]}`]}
+          {selectedDb === db["Database"] && (
+            <Box sx={{ paddingLeft: "16px" }}>
+              {tablesMap[db["Database"]]?.map((table) => (
+                <Box
+                  key={table[`Tables_in_${db["Database"]}`]}
+                  sx={{
+                    marginBottom: "0.5rem",
+                    borderRadius: "40px",
+                    wordWrap: "break-word",
+                    color: "green",
+                    cursor: "pointer",
+                    transition: "opacity 0.2s ease-in-out",
+                  }}
+                  onClick={() =>
+                    onTableClick(
+                      db["Database"],
+                      table[`Tables_in_${db["Database"]}`]
+                    )
+                  }
+                >
+                  {table[`Tables_in_${db["Database"]}`]}
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
+          )}
+        </React.Fragment>
       ))}
     </Box>
   );

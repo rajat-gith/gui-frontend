@@ -14,11 +14,41 @@ const QueryDataTable = ({ data }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  if (!data || data.length === 0) {
+  // Helper function to determine if the data is a MySQL result object or an array of objects
+  const processData = (inputData) => {
+    // If it's a MySQL result object (with fieldCount, affectedRows, etc.)
+    if (
+      inputData &&
+      typeof inputData === "object" &&
+      "fieldCount" in inputData
+    ) {
+      return [
+        {
+          ...inputData,
+          message: inputData.message || "Database operation completed",
+        },
+      ];
+    }
+
+    // If it's an array of objects (normal data)
+    if (Array.isArray(inputData) && inputData.length > 0) {
+      return inputData;
+    }
+
+    // If no data or empty array
+    return [];
+  };
+
+  // Process the data
+  const processedData = processData(data);
+
+  // If no data to display
+  if (processedData.length === 0) {
     return <div>No data to display</div>;
   }
 
-  const columns = Object.keys(data[0]);
+  // Get columns dynamically
+  const columns = Object.keys(processedData[0] || {});
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -44,6 +74,7 @@ const QueryDataTable = ({ data }) => {
                 sx={{
                   color: "var(--primary-text-color)",
                   borderBottom: "1px solid var(--border-color)",
+                  fontWeight: "bold",
                 }}
               >
                 {col}
@@ -52,7 +83,7 @@ const QueryDataTable = ({ data }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data
+          {processedData
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((row, index) => (
               <TableRow
@@ -72,7 +103,12 @@ const QueryDataTable = ({ data }) => {
                       borderBottom: "1px solid var(--border-color)",
                     }}
                   >
-                    {row[col]}
+                    {/* Convert complex objects to JSON string, handle date formatting */}
+                    {row[col] instanceof Date
+                      ? row[col].toLocaleString()
+                      : typeof row[col] === "object"
+                      ? JSON.stringify(row[col])
+                      : row[col]}
                   </TableCell>
                 ))}
               </TableRow>
@@ -82,7 +118,7 @@ const QueryDataTable = ({ data }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={processedData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

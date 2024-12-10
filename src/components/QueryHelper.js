@@ -22,10 +22,10 @@ const QueryHelper = ({
         flexDirection: "column",
         gap: "16px",
         padding: "16px",
-        backgroundColor: "var(--card-background)", // Dark card background
+        backgroundColor: "var(--card-background)",
         borderRadius: "8px",
-        color: "var(--primary-text-color)", // Primary text color
-        border: "1px solid var(--border-color)", // Add border for definition
+        color: "var(--primary-text-color)",
+        border: "1px solid var(--border-color)",
       }}
     >
       {suggestQueryTable && suggestQueryDb && (

@@ -1,6 +1,5 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { thunk } from "redux-thunk";
-import { composeWithDevTools } from "redux-devtools-extension";
 import { loginUserReducer, registerUserReducer } from "./reducers/AuthReducer";
 import { dbConnectReducer, queryRunReducer } from "./reducers/DBReducer";
 
@@ -24,12 +23,10 @@ const initialState = {
   userRegister: { userInfo: userInfoFromStorage },
 };
 
-const middleware = [thunk];
-
-const store = createStore(
+const store = configureStore({
   reducer,
-  initialState,
-  composeWithDevTools(applyMiddleware(...middleware))
-);
+  preloadedState: initialState,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+});
 
 export default store;

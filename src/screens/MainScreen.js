@@ -27,6 +27,7 @@ const MainScreen = () => {
   const [result, setResult] = useState("");
   const [responseError, setResponseError] = useState(null);
   const [copySuccess, setCopySuccess] = useState("");
+  const [shouldFetchResult, setShouldFetchResult] = useState(false);
 
   const isDbConnected = localStorage.getItem("isDbConnected");
 
@@ -61,7 +62,7 @@ const MainScreen = () => {
     }
 
     if (data[0] && Object.keys(data[0])[0].split("_")[0] === "Tables") {
-      const dbName = Object.keys(data[0])[0].split("_")[2];
+      const dbName = Object.keys(data[0])[0].split("_").slice(2).join("_");
       setTablesMap((prev) => ({
         ...prev,
         [dbName]: data,
@@ -110,11 +111,18 @@ const MainScreen = () => {
   const handleQueryHelp = () => {
     if (suggestQueryDb.length && suggestQueryTable.length) {
       dispatch(queryRun(`DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`));
+      setShouldFetchResult(true);
     }
-    const tableSchema = systemQuery?.data?.data;
-    console.log(suggestQueryTable);
-    fetchResult(tableSchema, userPrompt, suggestQueryTable);
   };
+
+  useEffect(() => {
+    console.log(shouldFetchResult)
+    if (shouldFetchResult && systemQuery?.data?.data) {
+      const tableSchema = systemQuery.data.data;
+      fetchResult(tableSchema, userPrompt, suggestQueryTable);
+      setShouldFetchResult(false);
+    }
+  }, [systemQuery, shouldFetchResult, userPrompt, suggestQueryTable]);
 
   const handleDisconnect = () => {
     setIsConnected(false);
@@ -130,7 +138,7 @@ const MainScreen = () => {
   };
 
   const handleDbClick = (db) => {
-    setSelectedDb(db["Database"]); 
+    setSelectedDb(db["Database"]);
     dispatch(queryRun(`SHOW TABLES FROM ${db["Database"]}`));
     let connDetails = JSON.parse(getDecryptedItem("conn"));
     connDetails["database"] = db["Database"];
@@ -138,8 +146,6 @@ const MainScreen = () => {
       dispatch(connectDb(connDetails));
     }
   };
-  console.log(selectedDb)
-  
 
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
