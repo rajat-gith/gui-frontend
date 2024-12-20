@@ -40,10 +40,21 @@ const LoginComponent = () => {
         alert("Invalid Credentials");
       }
     }
-  }, [userInfo]);
+  }, [userInfo, navigate]);
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      noValidate
+      autoComplete="off"
+      sx={{
+        bgcolor: "var(--card-background)",
+        padding: 3,
+        borderRadius: "8px",
+        transition: "all 0.3s ease-in-out",
+      }}
+    >
       <TextField
         fullWidth
         label="Email"
@@ -53,6 +64,20 @@ const LoginComponent = () => {
         margin="normal"
         disabled={loading}
         variant="outlined"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            color: "var(--primary-text-color)",
+            "& fieldset": {
+              borderColor: "var(--border-color)",
+            },
+            "&:hover fieldset": {
+              borderColor: "var(--button-hover-background)",
+            },
+          },
+          "& .MuiInputLabel-root": {
+            color: "var(--secondary-text-color)",
+          },
+        }}
       />
       <TextField
         fullWidth
@@ -63,6 +88,20 @@ const LoginComponent = () => {
         margin="normal"
         disabled={loading}
         variant="outlined"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            color: "var(--primary-text-color)",
+            "& fieldset": {
+              borderColor: "var(--border-color)",
+            },
+            "&:hover fieldset": {
+              borderColor: "var(--button-hover-background)",
+            },
+          },
+          "& .MuiInputLabel-root": {
+            color: "var(--secondary-text-color)",
+          },
+        }}
       />
       {error && (
         <Typography color="error" variant="body2">
@@ -74,7 +113,14 @@ const LoginComponent = () => {
         fullWidth
         variant="contained"
         color="primary"
-        sx={{ marginTop: 2 }}
+        sx={{
+          marginTop: 2,
+          backgroundColor: "var(--button-background)",
+          color: "var(--button-text-color)",
+          "&:hover": {
+            backgroundColor: "var(--button-hover-background)",
+          },
+        }}
         disabled={loading}
       >
         {loading ? <CircularProgress size={24} /> : "Login"}

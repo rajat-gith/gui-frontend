@@ -1,13 +1,18 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { thunk } from "redux-thunk";
 import { loginUserReducer, registerUserReducer } from "./reducers/AuthReducer";
-import { dbConnectReducer, queryRunReducer } from "./reducers/DBReducer";
+import {
+  dbConnectReducer,
+  queryRunReducer,
+  dbDisConnectReducer,
+} from "./reducers/DBReducer";
 
 const reducer = combineReducers({
   userLogin: loginUserReducer,
   userRegister: registerUserReducer,
   connectDb: dbConnectReducer,
   queryRun: queryRunReducer,
+  disconnectDb: dbDisConnectReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

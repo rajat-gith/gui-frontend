@@ -13,6 +13,10 @@ function HomeScreen() {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
+        backgroundImage: "url('/bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       <Box

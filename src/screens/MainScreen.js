@@ -10,7 +10,7 @@ import DatabaseSidebar from "../components/DatabaseSidebar";
 import QueryOutput from "../components/QueryOutput";
 import QueryHelper from "../components/QueryHelper";
 
-import { connectDb, queryRun } from "../actions/DBActions";
+import { connectDb, disconnectDb, queryRun } from "../actions/DBActions";
 import QuerySuggestion from "../components/QuerySuggestion";
 import { getDecryptedItem } from "../utils/storageUtils";
 
@@ -34,6 +34,7 @@ const MainScreen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
+  console.log("isConnected", isDbConnected);
   const handleConnect = () => {
     setIsModalOpen(true);
   };
@@ -53,6 +54,10 @@ const MainScreen = () => {
     const dbConnected = localStorage.getItem("isDbConnected") === "true";
     setIsConnected(dbConnected);
   }, []);
+
+  useEffect(() => {
+    console.log("here");
+  }, [isDbConnected]);
 
   useEffect(() => {
     if (!systemQuery?.data) return;
@@ -116,7 +121,6 @@ const MainScreen = () => {
   };
 
   useEffect(() => {
-    console.log(shouldFetchResult)
     if (shouldFetchResult && systemQuery?.data?.data) {
       const tableSchema = systemQuery.data.data;
       fetchResult(tableSchema, userPrompt, suggestQueryTable);
@@ -127,6 +131,7 @@ const MainScreen = () => {
   const handleDisconnect = () => {
     setIsConnected(false);
     localStorage.setItem("isDbConnected", "false");
+    dispatch(disconnectDb());
     setDbs(null);
     setTablesMap({});
   };
@@ -186,7 +191,7 @@ const MainScreen = () => {
           alignItems: "center",
         }}
       >
-        {!isConnected ? (
+        {!(isDbConnected === "true") ? (
           <Button variant="contained" onClick={handleConnect}>
             Connect to Database
           </Button>
@@ -240,6 +245,7 @@ const MainScreen = () => {
             onReload={handleReloadDb}
             onDbClick={handleDbClick}
             onTableClick={handleTableCLick}
+            isDbConnected={isDbConnected}
           />
         )}
         <Box

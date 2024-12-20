@@ -35,7 +35,6 @@ const ConnectDBForm = ({ open, onClose }) => {
     dispatch(connectDb(data));
   };
 
-
   const fetchDatabases = () => {
     if (dbConn) {
       dispatch(queryRun("SHOW DATABASES"));
@@ -47,8 +46,6 @@ const ConnectDBForm = ({ open, onClose }) => {
       fetchDatabases();
     }
   }, [dbConn]);
-
-  
 
   const modalStyle = {
     position: "absolute",

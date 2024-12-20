@@ -2,6 +2,9 @@ import {
   CONNECT_DB_FAIL,
   CONNECT_DB_REQUEST,
   CONNECT_DB_SUCCESS,
+  DISCONNECT_DB_FAIL,
+  DISCONNECT_DB_REQUEST,
+  DISCONNECT_DB_SUCCESS,
   SYSTEM_QUERY_FAIL,
   SYSTEM_QUERY_REQUEST,
   SYSTEM_QUERY_SUCCESS,
@@ -19,6 +22,22 @@ export const dbConnectReducer = (state = {}, action) => {
       return { loading: false, dbConn: action.payload };
 
     case CONNECT_DB_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const dbDisConnectReducer = (state = {}, action) => {
+  switch (action.type) {
+    case DISCONNECT_DB_REQUEST:
+      return { loading: true };
+
+    case DISCONNECT_DB_SUCCESS:
+      return { loading: false, dbConn: action.payload };
+
+    case DISCONNECT_DB_FAIL:
       return { loading: false, error: action.payload };
 
     default:

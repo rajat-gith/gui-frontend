@@ -12,7 +12,6 @@ const QueryHelper = ({
   suggestQueryTable,
 }) => {
   useEffect(() => {
-    console.log(isTableSelected, suggestQueryDb, suggestQueryTable);
   }, [isTableSelected, suggestQueryDb, suggestQueryTable]);
 
   return (

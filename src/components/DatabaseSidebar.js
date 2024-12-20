@@ -10,10 +10,10 @@ const DatabaseSidebar = ({
   onReload,
   onDbClick,
   onTableClick,
+  isDbConnected,
 }) => {
-  useEffect(() => {}, [tablesMap]);
+  useEffect(() => {}, [tablesMap, isDbConnected]);
   const { loading, dbConn } = useSelector((state) => state.connectDb);
-
   return (
     <Box
       sx={{
@@ -29,6 +29,7 @@ const DatabaseSidebar = ({
       <Button
         onClick={onReload}
         variant="contained"
+        disabled={!(isDbConnected === "true")}
         sx={{ marginBottom: "10px" }}
       >
         Reload Databases

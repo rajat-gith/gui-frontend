@@ -8,6 +8,9 @@ import {
   USER_QUERY_FAIL,
   USER_QUERY_REQUEST,
   USER_QUERY_SUCCESS,
+  DISCONNECT_DB_REQUEST,
+  DISCONNECT_DB_SUCCESS,
+  DISCONNECT_DB_FAIL,
 } from "../constants/DBConstants";
 import axios from "axios";
 
@@ -48,6 +51,34 @@ export const connectDb = (connectDbCreds) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: CONNECT_DB_FAIL,
+      payload: error.response,
+    });
+  }
+};
+
+export const disconnectDb = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: DISCONNECT_DB_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+
+    const { data } = await axios.post(`${BASE_URL}/api/disconnect`, {}, config);
+
+    dispatch({
+      type: DISCONNECT_DB_SUCCESS,
+      payload: { data },
+    });
+
+    localStorage.setItem("isDbConnected", JSON.stringify(false));
+  } catch (error) {
+    dispatch({
+      type: DISCONNECT_DB_FAIL,
       payload: error.response,
     });
   }
