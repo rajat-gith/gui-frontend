@@ -34,7 +34,6 @@ const MainScreen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
-  console.log("isConnected", isDbConnected);
   const handleConnect = () => {
     setIsModalOpen(true);
   };
@@ -55,9 +54,7 @@ const MainScreen = () => {
     setIsConnected(dbConnected);
   }, []);
 
-  useEffect(() => {
-    console.log("here");
-  }, [isDbConnected]);
+  useEffect(() => {}, [isDbConnected]);
 
   useEffect(() => {
     if (!systemQuery?.data) return;
@@ -85,6 +82,7 @@ const MainScreen = () => {
     const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
       tableSchema
     )} of ${table}`;
+    console.log("Here.............");
     try {
       const genAI = new GoogleGenerativeAI(
         process.env.REACT_APP_GEMINI_API_KEY
@@ -115,18 +113,19 @@ const MainScreen = () => {
 
   const handleQueryHelp = () => {
     if (suggestQueryDb.length && suggestQueryTable.length) {
-      dispatch(queryRun(`DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`));
+      dispatch(
+        queryRun(
+          `DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`,
+          "system",
+          (data) => {
+            console.log(data);
+            fetchResult(data, userPrompt, suggestQueryTable);
+          }
+        )
+      );
       setShouldFetchResult(true);
     }
   };
-
-  useEffect(() => {
-    if (shouldFetchResult && systemQuery?.data?.data) {
-      const tableSchema = systemQuery.data.data;
-      fetchResult(tableSchema, userPrompt, suggestQueryTable);
-      setShouldFetchResult(false);
-    }
-  }, [systemQuery, shouldFetchResult, userPrompt, suggestQueryTable]);
 
   const handleDisconnect = () => {
     setIsConnected(false);

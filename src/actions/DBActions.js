@@ -85,12 +85,13 @@ export const disconnectDb = () => async (dispatch) => {
 };
 
 export const queryRun =
-  (query, queryType = "user") =>
+  (query, queryType = "user", callback = null) =>
   async (dispatch) => {
     const isSystemQuery =
       query.toLowerCase().includes("show databases") ||
       query.toLowerCase().includes("show tables") ||
       query.toLowerCase().includes("describe");
+
     try {
       dispatch({
         type: isSystemQuery ? SYSTEM_QUERY_REQUEST : USER_QUERY_REQUEST,
@@ -109,10 +110,15 @@ export const queryRun =
         },
         config
       );
+
       dispatch({
         type: isSystemQuery ? SYSTEM_QUERY_SUCCESS : USER_QUERY_SUCCESS,
         payload: data,
       });
+
+      if (callback) {
+        callback(data);
+      }
     } catch (error) {
       dispatch({
         type: isSystemQuery ? SYSTEM_QUERY_FAIL : USER_QUERY_FAIL,
