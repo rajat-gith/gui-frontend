@@ -3,6 +3,7 @@ import { Box, Button, Snackbar, IconButton } from "@mui/material";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import CloseIcon from "@mui/icons-material/Close";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import ConnectDBForm from "../components/ConnectDBForm";
 import QueryEditor from "../components/QueryEditor";
@@ -133,6 +134,7 @@ const MainScreen = () => {
     dispatch(disconnectDb());
     setDbs(null);
     setTablesMap({});
+    setSelectedDb(null);
   };
 
   const handleTableCLick = (db, table) => {
@@ -172,14 +174,22 @@ const MainScreen = () => {
     }
   };
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      setIsSidebarOpen(!mobile);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <Box
         sx={{
           padding: "16px",
@@ -188,8 +198,14 @@ const MainScreen = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: 2,
         }}
       >
+        {isMobile && isDbConnected === "true" && (
+          <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            <MenuIcon style={{ color: "white" }} />
+          </IconButton>
+        )}
         {!(isDbConnected === "true") ? (
           <Button variant="contained" onClick={handleConnect}>
             Connect to Database
@@ -203,7 +219,6 @@ const MainScreen = () => {
             Disconnect
           </Button>
         )}
-
         <ConnectDBForm
           open={isModalOpen}
           onClose={handleCloseModal}
@@ -215,44 +230,58 @@ const MainScreen = () => {
 
       <Box
         sx={{
-          overflowY: "scroll",
           display: "flex",
           flex: 1,
+          position: "relative",
           backgroundColor: "var(--background-color)",
-          padding: "16px",
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "var(--hover-effect)",
-            borderRadius: "4px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "var(--divider-color)",
-          },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "var(--sidebar-background)",
-          },
+          overflow: "hidden",
         }}
       >
         {isDbConnected && (
-          <DatabaseSidebar
-            dbs={dbs}
-            tablesMap={tablesMap}
-            selectedDb={selectedDb}
-            setSelectedDb={setSelectedDb}
-            onReload={handleReloadDb}
-            onDbClick={handleDbClick}
-            onTableClick={handleTableCLick}
-            isDbConnected={isDbConnected}
-          />
+          <Box
+            sx={{
+              width: { xs: "100%", md: "250px" },
+              position: { xs: "absolute", md: "relative" },
+              height: "100%",
+              transform: {
+                xs: isSidebarOpen ? "translateX(0)" : "translateX(-100%)",
+                md: "none",
+              },
+              transition: "transform 0.3s ease",
+              zIndex: { xs: 10, md: 1 },
+              bgcolor: "var(--background-color)",
+              borderRight: "1px solid var(--border-color)",
+              overflowY: "auto",
+            }}
+          >
+            <DatabaseSidebar
+              dbs={dbs}
+              tablesMap={tablesMap}
+              selectedDb={selectedDb}
+              setSelectedDb={setSelectedDb}
+              onReload={handleReloadDb}
+              onDbClick={handleDbClick}
+              onTableClick={handleTableCLick}
+              isDbConnected={isDbConnected}
+            />
+          </Box>
         )}
+
         <Box
           sx={{
             flex: 1,
-            padding: "16px",
+            padding: { xs: 1, sm: 2, md: 3 },
             overflowY: "auto",
             bgcolor: "var(--background-color)",
+            "&::-webkit-scrollbar": { width: "8px" },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "var(--hover-effect)",
+              borderRadius: "4px",
+              "&:hover": { backgroundColor: "var(--divider-color)" },
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "var(--sidebar-background)",
+            },
           }}
         >
           <QueryEditor userQuery={userQuery} dispatch={dispatch} />

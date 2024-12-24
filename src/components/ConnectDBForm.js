@@ -41,6 +41,8 @@ const ConnectDBForm = ({ open, onClose }) => {
     }
   };
 
+  console.log(error)
+
   useEffect(() => {
     if (dbConn) {
       fetchDatabases();

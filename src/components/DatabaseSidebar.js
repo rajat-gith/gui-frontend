@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
@@ -6,55 +6,41 @@ const DatabaseSidebar = ({
   dbs,
   tablesMap,
   selectedDb,
-  setSelectedDb,
   onReload,
   onDbClick,
   onTableClick,
   isDbConnected,
 }) => {
-  useEffect(() => {}, [tablesMap, isDbConnected]);
   const { loading, dbConn } = useSelector((state) => state.connectDb);
+
   return (
-    <Box
-      sx={{
-        width: "25%",
-        backgroundColor: "var(--sidebar-background)",
-        color: "var(--primary-text-color)",
-        borderRight: "1px solid var(--border-color)",
-        padding: "16px",
-        overflowY: "auto",
-        transition: "all 0.3s ease-in-out",
-      }}
-    >
+    <Box sx={{
+      flex: { xs: '0 0 100%', md: '0 0 250px' },
+      backgroundColor: "var(--sidebar-background)",
+      color: "var(--primary-text-color)",
+      height: "100%",
+      p: 2,
+      overflowY: "auto"
+    }}>
       <Button
         onClick={onReload}
         variant="contained"
+        fullWidth
         disabled={!(isDbConnected === "true")}
-        sx={{ marginBottom: "10px" }}
+        sx={{ mb: 2 }}
       >
         Reload Databases
       </Button>
 
       {selectedDb && (
-        <Box
-          sx={{
-            marginTop: "16px",
-            color: "var(--primary-text-color)",
-            "& .MuiAlert-icon": {
-              color: "var(--primary-text-color)",
-            },
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="body1">Selected Database:</Typography>
-          <Typography variant="h6">
-            {!loading
-              ? dbConn?.data?.success
-                ? selectedDb
-                : dbConn?.data
-                ? "Error connecting Db"
-                : "No data available"
-              : "Loading..."}
+        <Box sx={{
+          mt: 1,
+          mb: 2,
+          textAlign: "center",
+        }}>
+          <Typography variant="body2">Selected Database:</Typography>
+          <Typography variant="subtitle1">
+            {!loading ? (dbConn?.data?.success ? selectedDb : "Error") : "Loading..."}
           </Typography>
         </Box>
       )}
@@ -64,44 +50,35 @@ const DatabaseSidebar = ({
           <Box
             onClick={() => onDbClick(db)}
             sx={{
+              p: 1.5,
+              mb: 1,
+              borderRadius: 3,
+              border: selectedDb === db["Database"] ? "2px solid green" : "1px solid var(--border-color)",
               cursor: "pointer",
-              padding: "8px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              marginBottom: "8px",
-              borderRadius: "30px",
-              border:
-                selectedDb === db["Database"]
-                  ? "2px solid green"
-                  : "1px solid var(--border-color)",
-              transition: "all 0.2s ease-in-out",
+              "&:hover": { bgcolor: "var(--hover-effect)" }
             }}
           >
-            <Box sx={{ alignItems: "center" }}>{db["Database"]}</Box>
+            <Typography noWrap>{db["Database"]}</Typography>
           </Box>
 
           {selectedDb === db["Database"] && (
-            <Box sx={{ paddingLeft: "16px" }}>
+            <Box sx={{ pl: 2, mb: 2 }}>
               {tablesMap[db["Database"]]?.map((table) => (
                 <Box
                   key={table[`Tables_in_${db["Database"]}`]}
+                  onClick={() => onTableClick(db["Database"], table[`Tables_in_${db["Database"]}`])}
                   sx={{
-                    marginBottom: "0.5rem",
-                    borderRadius: "40px",
-                    wordWrap: "break-word",
+                    p: 1,
+                    mb: 0.5,
+                    borderRadius: 2,
                     color: "green",
                     cursor: "pointer",
-                    transition: "opacity 0.2s ease-in-out",
+                    "&:hover": { bgcolor: "var(--hover-effect)" }
                   }}
-                  onClick={() =>
-                    onTableClick(
-                      db["Database"],
-                      table[`Tables_in_${db["Database"]}`]
-                    )
-                  }
                 >
-                  {table[`Tables_in_${db["Database"]}`]}
+                  <Typography noWrap variant="body2">
+                    {table[`Tables_in_${db["Database"]}`]}
+                  </Typography>
                 </Box>
               ))}
             </Box>

@@ -19,13 +19,14 @@ const AuthScreen = () => {
         justifyContent: "center",
         minHeight: "100vh",
         transition: "all 0.3s ease-in-out",
+        padding: { xs: 2, md: 4 },
       }}
     >
       <Paper
         elevation={3}
         sx={{
-          width: 400,
-          padding: 3,
+          width: { xs: 300, md: 400 },
+          padding: { xs: 2, md: 3 },
           backgroundColor: "var(--card-background)",
           color: "var(--primary-text-color)",
           borderRadius: "8px",
@@ -38,7 +39,7 @@ const AuthScreen = () => {
           gutterBottom
           sx={{
             color: "var(--primary-text-color)",
-            marginBottom: 2,
+            marginBottom: { xs: 1, md: 2 },
             transition: "all 0.3s ease-in-out",
           }}
         >
@@ -53,6 +54,7 @@ const AuthScreen = () => {
             marginBottom: 2,
             "& .MuiTab-root": {
               color: "var(--secondary-text-color)",
+              fontSize: { xs: "0.8rem", md: "1rem" },
             },
             "& .MuiTab-root.Mui-selected": {
               color: "var(--primary-text-color)",
