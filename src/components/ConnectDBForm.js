@@ -41,7 +41,7 @@ const ConnectDBForm = ({ open, onClose }) => {
     }
   };
 
-  console.log(error)
+  console.log(error);
 
   useEffect(() => {
     if (dbConn) {
@@ -54,7 +54,7 @@ const ConnectDBForm = ({ open, onClose }) => {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 600,
+    width: { xs: "90%", sm: 600 },
     bgcolor: "var(--background-color)",
     boxShadow: 24,
     p: 4,
@@ -93,7 +93,7 @@ const ConnectDBForm = ({ open, onClose }) => {
           noValidate
         >
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel
                   id="dbType-label"
@@ -136,7 +136,7 @@ const ConnectDBForm = ({ open, onClose }) => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Host"
                 name="host"
@@ -161,7 +161,7 @@ const ConnectDBForm = ({ open, onClose }) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Port"
                 name="port"
@@ -187,7 +187,7 @@ const ConnectDBForm = ({ open, onClose }) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="User"
                 name="user"
@@ -212,7 +212,7 @@ const ConnectDBForm = ({ open, onClose }) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Password"
                 name="password"
@@ -275,7 +275,7 @@ const ConnectDBForm = ({ open, onClose }) => {
             </Box>
           )}
         </Box>
-      </Box>
+      </Box> 
     </Modal>
   );
 };
