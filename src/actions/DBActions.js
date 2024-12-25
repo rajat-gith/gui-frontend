@@ -11,6 +11,9 @@ import {
   DISCONNECT_DB_REQUEST,
   DISCONNECT_DB_SUCCESS,
   DISCONNECT_DB_FAIL,
+  QUERY_SUGGESTION_FAIL,
+  QUERY_SUGGESTION_SUCCESS,
+  QUERY_SUGGESTION_REQUEST,
 } from "../constants/DBConstants";
 import axios from "axios";
 
@@ -123,6 +126,39 @@ export const queryRun =
       dispatch({
         type: isSystemQuery ? SYSTEM_QUERY_FAIL : USER_QUERY_FAIL,
         payload: error.response,
+      });
+    }
+  };
+
+export const generateQueryAction =
+  (naturalQuery, tableName, callback = null) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: QUERY_SUGGESTION_REQUEST,
+      });
+
+      const { data } = await axios.post(`${BASE_URL}/api/generate-query`, {
+        naturalQuery,
+        tableName,
+      });
+
+      if (!data.query) {
+        throw new Error("Failed to generate SQL query");
+      }
+
+      dispatch({
+        type: QUERY_SUGGESTION_SUCCESS,
+        payload: data.query,
+      });
+
+      if (callback) {
+        callback(data.query);
+      }
+    } catch (error) {
+      dispatch({
+        type: QUERY_SUGGESTION_FAIL,
+        payload: error.response ? error.response.data : error.message,
       });
     }
   };

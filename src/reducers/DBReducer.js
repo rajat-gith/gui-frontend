@@ -5,6 +5,9 @@ import {
   DISCONNECT_DB_FAIL,
   DISCONNECT_DB_REQUEST,
   DISCONNECT_DB_SUCCESS,
+  QUERY_SUGGESTION_FAIL,
+  QUERY_SUGGESTION_REQUEST,
+  QUERY_SUGGESTION_SUCCESS,
   SYSTEM_QUERY_FAIL,
   SYSTEM_QUERY_REQUEST,
   SYSTEM_QUERY_SUCCESS,
@@ -38,6 +41,22 @@ export const dbDisConnectReducer = (state = {}, action) => {
       return { loading: false, dbConn: action.payload };
 
     case DISCONNECT_DB_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const generateQueryReducer = (state = {}, action) => {
+  switch (action.type) {
+    case QUERY_SUGGESTION_REQUEST:
+      return { loading: true };
+
+    case QUERY_SUGGESTION_SUCCESS:
+      return { loading: false, sqlQuery: action.payload };
+
+    case QUERY_SUGGESTION_FAIL:
       return { loading: false, error: action.payload };
 
     default:

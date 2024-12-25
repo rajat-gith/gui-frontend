@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Snackbar, IconButton } from "@mui/material";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 
@@ -14,6 +14,7 @@ import QueryHelper from "../components/QueryHelper";
 import { connectDb, disconnectDb, queryRun } from "../actions/DBActions";
 import QuerySuggestion from "../components/QuerySuggestion";
 import { getDecryptedItem } from "../utils/storageUtils";
+import { handleQueryHelp } from "../utils/queryHelp";
 
 const MainScreen = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,8 @@ const MainScreen = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleConnect = () => {
     setIsModalOpen(true);
@@ -75,57 +78,6 @@ const MainScreen = () => {
 
   const handleReloadDb = () => {
     dispatch(queryRun("SHOW DATABASES"));
-  };
-
-  const fetchResult = async (tableSchema, prompt, table) => {
-    setResponseLoading(true);
-    setResponseError(null);
-    const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
-      tableSchema
-    )} of ${table}`;
-    console.log("Here.............");
-    try {
-      const genAI = new GoogleGenerativeAI(
-        process.env.REACT_APP_GEMINI_API_KEY
-      );
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const result = await model.generateContent(finalPrompt);
-
-      const regex = /```sql\n([\s\S]*?)\n```/;
-      const extractedQuery = result.response.text().match(regex);
-
-      if (extractedQuery) {
-        const sanitizedQuery = extractedQuery[1]
-          .replace(/\/\*[\s\S]*?\*\//g, "")
-          .replace(/\n/g, " ")
-          .replace(/\s+/g, " ")
-          .trim();
-
-        setResult(sanitizedQuery);
-      } else {
-        setResult("No valid SQL query found in the response.");
-      }
-    } catch (err) {
-      setResponseError(err.message || "Error generating content");
-    } finally {
-      setResponseLoading(false);
-    }
-  };
-
-  const handleQueryHelp = () => {
-    if (suggestQueryDb.length && suggestQueryTable.length) {
-      dispatch(
-        queryRun(
-          `DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`,
-          "system",
-          (data) => {
-            console.log(data);
-            fetchResult(data, userPrompt, suggestQueryTable);
-          }
-        )
-      );
-      setShouldFetchResult(true);
-    }
   };
 
   const handleDisconnect = () => {
@@ -172,6 +124,11 @@ const MainScreen = () => {
           setCopySuccess("Failed to copy!");
         });
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    navigate("/");
   };
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -226,6 +183,18 @@ const MainScreen = () => {
           onDisconnect={handleDisconnect}
           onConnectionSuccess={handleConnectionSuccess}
         />
+        <Button
+          onClick={handleLogout}
+          sx={{
+            bgcolor: "var(--logout-bg, #757575)",
+            color: "var(--logout-text-color, white)",
+            ":hover": {
+              bgcolor: "var(--logout-hover-bg, #494949)",
+            },
+          }}
+        >
+          Logout
+        </Button>
       </Box>
 
       <Box
@@ -284,11 +253,27 @@ const MainScreen = () => {
             },
           }}
         >
-          <QueryEditor userQuery={userQuery} dispatch={dispatch} />
+          <QueryEditor
+            isDbConnected={isDbConnected}
+            userQuery={userQuery}
+            dispatch={dispatch}
+          />
           <QueryHelper
             isTableSelected={suggestQueryTable.length > 0}
             userPrompt={userPrompt}
-            executeQueryHelp={handleQueryHelp}
+            executeQueryHelp={() =>
+               handleQueryHelp(
+                suggestQueryDb,
+                suggestQueryTable,
+                dispatch,
+                queryRun,
+                userPrompt,
+                setResponseLoading,
+                setResponseError,
+                setResult,
+                setShouldFetchResult
+              )
+            }
             setUserPrompt={setUserPrompt}
             responseLoading={responseLoading}
             suggestQueryDb={suggestQueryDb}

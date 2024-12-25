@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography, Paper } from "@mui/material";
+import { useSelector } from "react-redux";
+
 import LoginComponent from "../components/LoginComponent";
 import RegisterComponent from "../components/RegisterComponent";
 
@@ -9,6 +11,9 @@ const AuthScreen = () => {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { error, loading, userInfo } = userLogin;
 
   return (
     <Box
@@ -65,7 +70,7 @@ const AuthScreen = () => {
           }}
         >
           <Tab label="Login" />
-          <Tab label="Register" />
+          <Tab label="Register" disabled={loading} />
         </Tabs>
         {tabValue === 0 && <LoginComponent />}
         {tabValue === 1 && <RegisterComponent />}

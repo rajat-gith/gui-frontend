@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { queryRun } from "../actions/DBActions";
 
-const QueryEditor = ({ userQuery, dispatch }) => {
+const QueryEditor = ({ isDbConnected, userQuery, dispatch }) => {
   const [query, setQuery] = useState("");
   const textFieldRef = useRef(null);
 
+  useEffect(() => {}, [isDbConnected]);
   const handleQueryExecute = () => {
     const textArea = textFieldRef.current;
-    
+
     if (textArea) {
       const selectedText = textArea.value.substring(
         textArea.selectionStart,
@@ -33,7 +34,7 @@ const QueryEditor = ({ userQuery, dispatch }) => {
         placeholder="Write your query here..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        inputRef={textFieldRef} 
+        inputRef={textFieldRef}
         sx={{
           marginBottom: "16px",
           "& .MuiInputBase-root": { color: "var(--primary-text-color)" },
@@ -45,7 +46,7 @@ const QueryEditor = ({ userQuery, dispatch }) => {
         variant="contained"
         color="primary"
         onClick={handleQueryExecute}
-        disabled={userQuery?.loading}
+        disabled={userQuery?.loading || !(isDbConnected === "true")}
         sx={{ marginBottom: "16px" }}
       >
         Execute Query
