@@ -21,15 +21,19 @@ const ConnectDBForm = ({ open, onClose }) => {
   const { error, loading, dbConn } = conn;
   const [dbType, setDbType] = useState("mysql");
 
+  const fields = [
+    { label: "Host", name: "host", type: "text", required: true },
+    { label: "Port", name: "port", type: "number", required: true },
+    { label: "User", name: "user", type: "text", required: true },
+    { label: "Password", name: "password", type: "password", required: true },
+  ];
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const data = {
       dbType: formData.get("dbType"),
-      host: formData.get("host"),
-      port: formData.get("port"),
-      user: formData.get("user"),
-      password: formData.get("password"),
+      ...Object.fromEntries(fields.map((field) => [field.name, formData.get(field.name)])),
     };
     setEncryptedItem("conn", JSON.stringify(data));
     dispatch(connectDb(data));
@@ -40,9 +44,6 @@ const ConnectDBForm = ({ open, onClose }) => {
       dispatch(queryRun("SHOW DATABASES"));
     }
   };
-
-  console.log(error);
-
   useEffect(() => {
     if (dbConn) {
       fetchDatabases();
@@ -136,107 +137,33 @@ const ConnectDBForm = ({ open, onClose }) => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Host"
-                name="host"
-                fullWidth
-                required
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    color: "var(--primary-text-color)",
-                    fontFamily: "Arial",
-                    fontWeight: "bold",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "var(--button-background)",
-                      borderWidth: "2px",
+            {fields.map((field, index) => (
+              <Grid item xs={12} sm={6} key={index}>
+                <TextField
+                  label={field.label}
+                  name={field.name}
+                  fullWidth
+                  required={field.required}
+                  type={field.type}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      color: "var(--primary-text-color)",
+                      fontFamily: "Arial",
+                      fontWeight: "bold",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "var(--button-background)",
+                        borderWidth: "2px",
+                      },
                     },
-                  },
-                  "& .MuiInputLabel-outlined": {
-                    color: "var(--secondary-text-color)",
-                    fontWeight: "bold",
-                  },
-                }}
-                disabled={loading}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Port"
-                name="port"
-                fullWidth
-                required
-                type="number"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    color: "var(--primary-text-color)",
-                    fontFamily: "Arial",
-                    fontWeight: "bold",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "var(--button-background)",
-                      borderWidth: "2px",
+                    "& .MuiInputLabel-outlined": {
+                      color: "var(--secondary-text-color)",
+                      fontWeight: "bold",
                     },
-                  },
-                  "& .MuiInputLabel-outlined": {
-                    color: "var(--secondary-text-color)",
-                    fontWeight: "bold",
-                  },
-                }}
-                disabled={loading}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="User"
-                name="user"
-                fullWidth
-                required
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    color: "var(--primary-text-color)",
-                    fontFamily: "Arial",
-                    fontWeight: "bold",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "var(--button-background)",
-                      borderWidth: "2px",
-                    },
-                  },
-                  "& .MuiInputLabel-outlined": {
-                    color: "var(--secondary-text-color)",
-                    fontWeight: "bold",
-                  },
-                }}
-                disabled={loading}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Password"
-                name="password"
-                fullWidth
-                required
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    color: "var(--primary-text-color)",
-                    fontFamily: "Arial",
-                    fontWeight: "bold",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "var(--button-background)",
-                      borderWidth: "2px",
-                    },
-                  },
-                  "& .MuiInputLabel-outlined": {
-                    color: "var(--secondary-text-color)",
-                    fontWeight: "bold",
-                  },
-                }}
-                type="password"
-                disabled={loading}
-              />
-            </Grid>
+                  }}
+                  disabled={loading}
+                />
+              </Grid>
+            ))}
 
             <Grid item xs={12}>
               <Button
@@ -275,7 +202,7 @@ const ConnectDBForm = ({ open, onClose }) => {
             </Box>
           )}
         </Box>
-      </Box> 
+      </Box>
     </Modal>
   );
 };

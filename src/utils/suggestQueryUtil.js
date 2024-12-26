@@ -13,9 +13,11 @@ export const fetchResult = async (
 ) => {
   setResponseLoading(true);
   setResponseError(null);
+
   const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
     tableSchema
-  )} of ${table}`;
+  )} of ${table}'`;
+  
   try {
     if (prompt && table) {
       dispatch(
@@ -29,6 +31,6 @@ export const fetchResult = async (
   } catch (err) {
     setResponseError(err.message || "Error generating content");
   } finally {
-    setResponseLoading(false);
+    setResponseLoading(false);  // Ensures loading state is updated after the async operation
   }
 };

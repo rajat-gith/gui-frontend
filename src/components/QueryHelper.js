@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, TextField, Button, Tooltip, Alert } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import { useSelector } from "react-redux";
 
 const QueryHelper = ({
   isTableSelected,
@@ -11,9 +12,15 @@ const QueryHelper = ({
   suggestQueryDb,
   suggestQueryTable,
 }) => {
-  useEffect(() => {
-  }, [isTableSelected, suggestQueryDb, suggestQueryTable]);
-
+  useEffect(() => {}, [
+    isTableSelected,
+    suggestQueryDb,
+    suggestQueryTable,
+  ]);
+  const { error, loading, payload } = useSelector(
+    (state) => state.generateQuery
+  );
+  console.log(loading);
   return (
     <Box
       sx={{
@@ -78,7 +85,7 @@ const QueryHelper = ({
               },
             },
           }}
-          disabled={responseLoading}
+          disabled={loading}
           value={userPrompt}
           onChange={(e) => setUserPrompt(e.target.value)}
         />
@@ -88,19 +95,19 @@ const QueryHelper = ({
               sx={{
                 padding: "10px 24px",
                 backgroundColor:
-                  isTableSelected && !responseLoading
+                  isTableSelected && !loading
                     ? "var(--button-background)"
                     : "var(--suggest-button-background)",
                 color: "var(--button-text-color)",
                 "&:hover": {
                   backgroundColor:
-                    isTableSelected && !responseLoading
+                    isTableSelected && !loading
                       ? "var(--button-hover-background)"
                       : "var(--hover-effect)",
                 },
                 transition: "background-color 0.3s ease",
               }}
-              disabled={!isTableSelected || responseLoading}
+              disabled={!isTableSelected || loading}
               variant="contained"
               onClick={() => executeQueryHelp(userPrompt)}
             >
