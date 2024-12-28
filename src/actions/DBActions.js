@@ -49,7 +49,7 @@ export const connectDb = (connectDbCreds) => async (dispatch) => {
       type: CONNECT_DB_SUCCESS,
       payload: { data },
     });
-
+    localStorage.setItem("threadId",data.data.split(' ').slice(-1)[0])
     localStorage.setItem("isDbConnected", JSON.stringify(true));
   } catch (error) {
     dispatch({

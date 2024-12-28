@@ -145,6 +145,7 @@ const ConnectDBForm = ({ open, onClose }) => {
                   fullWidth
                   required={field.required}
                   type={field.type}
+                  autoComplete="off"
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       color: "var(--primary-text-color)",

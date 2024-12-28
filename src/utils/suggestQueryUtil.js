@@ -3,7 +3,6 @@ import axios from "axios";
 import { generateQueryAction } from "../actions/DBActions";
 
 export const fetchResult = async (
-  tableSchema,
   prompt,
   dispatch,
   table,
@@ -14,9 +13,9 @@ export const fetchResult = async (
   setResponseLoading(true);
   setResponseError(null);
 
-  const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
-    tableSchema
-  )} of ${table}'`;
+  // const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
+  //   tableSchema
+  // )} of ${table}'`;
   
   try {
     if (prompt && table) {

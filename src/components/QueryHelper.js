@@ -20,7 +20,6 @@ const QueryHelper = ({
   const { error, loading, payload } = useSelector(
     (state) => state.generateQuery
   );
-  console.log(loading);
   return (
     <Box
       sx={{

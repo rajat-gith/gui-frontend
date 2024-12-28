@@ -15,6 +15,7 @@ import { connectDb, disconnectDb, queryRun } from "../actions/DBActions";
 import QuerySuggestion from "../components/QuerySuggestion";
 import { getDecryptedItem } from "../utils/storageUtils";
 import { handleQueryHelp } from "../utils/queryHelp";
+import ConnectionMonitor from "../components/ConnectionMonitor";
 
 const MainScreen = () => {
   const dispatch = useDispatch();
@@ -147,6 +148,7 @@ const MainScreen = () => {
 
   return (
     <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <ConnectionMonitor />
       <Box
         sx={{
           padding: "16px",
@@ -262,7 +264,7 @@ const MainScreen = () => {
             isTableSelected={suggestQueryTable.length > 0}
             userPrompt={userPrompt}
             executeQueryHelp={() =>
-               handleQueryHelp(
+              handleQueryHelp(
                 suggestQueryDb,
                 suggestQueryTable,
                 dispatch,
