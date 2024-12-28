@@ -57,9 +57,13 @@ const ConnectionMonitor = () => {
 
   useEffect(() => {
     const userId = 'user-' + Math.random().toString(36).substr(2, 9);
-    const wsUrl = process.env.REACT_APP_API_BASE_URL || 'ws://localhost:8080';
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const host = window.location.hostname;
+    const port = '8080';
+    const wsUrl = `${protocol}://${host}:${port}`;
 
     const ws = new WebSocket(`${wsUrl}?userId=${userId}`);
+
 
     ws.onopen = () => {
       console.log('WebSocket Connected');
