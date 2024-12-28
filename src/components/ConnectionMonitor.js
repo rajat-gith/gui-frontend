@@ -58,7 +58,7 @@ const ConnectionMonitor = () => {
   useEffect(() => {
     const userId = 'user-' + Math.random().toString(36).substr(2, 9);
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const host = process.env.REACT_APP_API_BASE_URL;
+    const host = process.env.REACT_APP_WEBSOCKET_URL;
     const wsUrl = `${protocol}://${host}`;
 
     const ws = new WebSocket(`${wsUrl}?userId=${userId}`);
