@@ -5,6 +5,7 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
+  USER_LOGOUT
 } from "../constants/AuthConstants";
 import axios from "axios";
 
@@ -43,6 +44,12 @@ export const login = (email, password) => async (dispatch) => {
   }
 };
 
+
+export const logout = () => (dispatch) => {
+  console.log("reached")
+  localStorage.removeItem('userInfo')
+  dispatch({type:USER_LOGOUT})
+}
 export const register = (name, email, password) => async (dispatch) => {
   try {
     dispatch({

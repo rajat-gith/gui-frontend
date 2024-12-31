@@ -16,6 +16,7 @@ import QuerySuggestion from "../components/QuerySuggestion";
 import { getDecryptedItem } from "../utils/storageUtils";
 import { handleQueryHelp } from "../utils/queryHelp";
 import ConnectionMonitor from "../components/ConnectionMonitor";
+import { logout } from "../actions/AuthActions";
 
 const MainScreen = () => {
   const dispatch = useDispatch();
@@ -128,7 +129,7 @@ const MainScreen = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userInfo");
+    dispatch(logout());
     navigate("/");
   };
 
@@ -270,7 +271,7 @@ const MainScreen = () => {
                 dispatch,
                 queryRun,
                 userPrompt,
-                setResult,
+                setResult
               )
             }
             setUserPrompt={setUserPrompt}
