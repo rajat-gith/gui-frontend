@@ -270,10 +270,7 @@ const MainScreen = () => {
                 dispatch,
                 queryRun,
                 userPrompt,
-                setResponseLoading,
-                setResponseError,
                 setResult,
-                setShouldFetchResult
               )
             }
             setUserPrompt={setUserPrompt}

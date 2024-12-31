@@ -6,29 +6,9 @@ export const handleQueryHelp = (
   dispatch,
   queryRun,
   userPrompt,
-  setResponseLoading,
-  setResponseError,
-  setResult,
-  setShouldFetchResult
+  setResult
 ) => {
   if (suggestQueryDb.length && suggestQueryTable.length) {
-    dispatch(
-      queryRun(
-        `DESCRIBE ${suggestQueryDb}.${suggestQueryTable}`,
-        "system",
-        (data) => {
-          fetchResult(
-            data,
-            userPrompt,
-            dispatch,
-            suggestQueryTable,
-            setResponseLoading,
-            setResponseError,
-            setResult
-          );
-        }
-      )
-    );
-    setShouldFetchResult(true);
+    fetchResult(userPrompt, dispatch, suggestQueryTable, setResult);
   }
 };
