@@ -33,8 +33,6 @@ const MainScreen = () => {
   const [copySuccess, setCopySuccess] = useState("");
   const [shouldFetchResult, setShouldFetchResult] = useState(false);
 
-  const isDbConnected = localStorage.getItem("isDbConnected");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -55,13 +53,25 @@ const MainScreen = () => {
 
   const { systemQuery, userQuery } = useSelector((state) => state.queryRun);
 
+  const [isDbConnected, setIsDbConnected] = useState(
+    localStorage.getItem("isDbConnected")
+  );
+
   useEffect(() => {
-    const dbConnected = localStorage.getItem("isDbConnected") === "true";
-    setIsConnected(dbConnected);
+    const handleStorageChange = (event) => {
+      if (event.key === "isDbConnected") {
+        setIsDbConnected(event.newValue);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
-  useEffect(() => {}, [isDbConnected]);
-
+  useEffect(() => {
+  }, [isDbConnected]);
+  
   useEffect(() => {
     if (!systemQuery?.data) return;
     const data = systemQuery.data?.data;
@@ -83,7 +93,7 @@ const MainScreen = () => {
   };
 
   const handleDisconnect = () => {
-    setIsConnected(false);
+    setIsDbConnected(false);
     localStorage.setItem("isDbConnected", "false");
     dispatch(disconnectDb());
     setDbs(null);
@@ -106,7 +116,7 @@ const MainScreen = () => {
       dispatch(connectDb(connDetails));
     }
   };
-
+  console.log(!(isDbConnected === "true"));
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;

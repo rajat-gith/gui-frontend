@@ -58,9 +58,9 @@ const ConnectionMonitor = () => {
   useEffect(() => {
     const userId = 'user-' + Math.random().toString(36).substr(2, 9);
     const host = process.env.REACT_APP_WEBSOCKET_URL;
-    const wsUrl = `ws://${host}`;
+    const wsUrl = `wss://${host}`;
 
-    const ws = new WebSocket(`${wsUrl}?userId=${userId}`);
+    const ws = new WebSocket(`wss://localhost:5000?userId=${userId}`);
 
 
     ws.onopen = () => {
