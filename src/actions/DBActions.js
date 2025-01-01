@@ -50,7 +50,7 @@ export const connectDb = (connectDbCreds) => async (dispatch) => {
       payload: { data },
     });
     localStorage.setItem("threadId",data.data.split(' ').slice(-1)[0])
-    localStorage.setItem("isDbConnected", JSON.stringify(true));
+    localStorage.setItem("isDbConnected", (true));
   } catch (error) {
     dispatch({
       type: CONNECT_DB_FAIL,

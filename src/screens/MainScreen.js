@@ -70,8 +70,8 @@ const MainScreen = () => {
   }, []);
 
   useEffect(() => {
+    console.log("isDbConnected changed:", isDbConnected);
   }, [isDbConnected]);
-  
   useEffect(() => {
     if (!systemQuery?.data) return;
     const data = systemQuery.data?.data;
@@ -116,7 +116,6 @@ const MainScreen = () => {
       dispatch(connectDb(connDetails));
     }
   };
-  console.log(!(isDbConnected === "true"));
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -176,17 +175,17 @@ const MainScreen = () => {
             <MenuIcon style={{ color: "white" }} />
           </IconButton>
         )}
-        {!(isDbConnected === "true") ? (
-          <Button variant="contained" onClick={handleConnect}>
-            Connect to Database
-          </Button>
-        ) : (
+        {isDbConnected === "true" ? (
           <Button
             variant="contained"
             color="secondary"
             onClick={handleDisconnect}
           >
             Disconnect
+          </Button>
+        ) : (
+          <Button variant="contained" onClick={handleConnect}>
+            Connect to Database
           </Button>
         )}
         <ConnectDBForm
