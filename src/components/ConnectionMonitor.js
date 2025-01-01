@@ -60,7 +60,7 @@ const ConnectionMonitor = () => {
     const host = process.env.REACT_APP_WEBSOCKET_URL;
     const wsUrl = `wss://${host}`;
 
-    const ws = new WebSocket(`wss://localhost:5000?userId=${userId}`);
+    const ws = new WebSocket(`${wsUrl}?userId=${userId}`);
 
 
     ws.onopen = () => {
