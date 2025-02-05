@@ -14,6 +14,9 @@ import {
   USER_QUERY_FAIL,
   USER_QUERY_REQUEST,
   USER_QUERY_SUCCESS,
+  SET_CONNECTION_ID,
+  SET_CURRENT_DB,
+  RESET_DB_CONNECTION,
 } from "../constants/DBConstants";
 
 export const dbConnectReducer = (state = {}, action) => {
@@ -27,6 +30,8 @@ export const dbConnectReducer = (state = {}, action) => {
     case CONNECT_DB_FAIL:
       return { loading: false, error: action.payload };
 
+    case RESET_DB_CONNECTION:
+      return {};
     default:
       return state;
   }
@@ -48,6 +53,29 @@ export const dbDisConnectReducer = (state = {}, action) => {
   }
 };
 
+export const connectionReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SET_CONNECTION_ID:
+      return {
+        ...state,
+        connId: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const currentDbReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SET_CURRENT_DB:
+      return {
+        ...state,
+        connId: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const generateQueryReducer = (state = {}, action) => {
   switch (action.type) {
     case QUERY_SUGGESTION_REQUEST:
@@ -73,6 +101,11 @@ const initialState = {
   userQuery: {
     loading: false,
     data: null,
+    error: null,
+  },
+  dbConn: {
+    loading: false,
+    dbConn: null,
     error: null,
   },
 };

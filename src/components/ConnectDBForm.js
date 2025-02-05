@@ -12,43 +12,55 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { connectDb, queryRun } from "../actions/DBActions";
+import { connectDb, queryRun, setConnectionId } from "../actions/DBActions";
 import { setEncryptedItem } from "../utils/storageUtils";
+import { v4 as uuidv4 } from "uuid";
 
-const ConnectDBForm = ({ open, onClose }) => {
+const ConnectDBForm = ({ open, onClose, onConnectionSuccess }) => {
   const dispatch = useDispatch();
   const conn = useSelector((state) => state.connectDb);
   const { error, loading, dbConn } = conn;
   const [dbType, setDbType] = useState("mysql");
+  const { connId } = useSelector((state) => state.connection);
 
   const fields = [
     { label: "Host", name: "host", type: "text", required: true },
     { label: "Port", name: "port", type: "number", required: true },
     { label: "User", name: "user", type: "text", required: true },
     { label: "Password", name: "password", type: "password", required: true },
+    {
+      label: "Name of the Connection",
+      name: "connectionId",
+      type: "text",
+      required: true,
+    },
   ];
+
+  useEffect(() => {
+    if (dbConn) {
+      onConnectionSuccess();
+    }
+  }, [dbConn]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const connId = uuidv4();
+    const userId = localStorage.getItem("userId");
+
     const data = {
       dbType: formData.get("dbType"),
-      ...Object.fromEntries(fields.map((field) => [field.name, formData.get(field.name)])),
+      connId,
+      userId,
+      ...Object.fromEntries(
+        fields.map((field) => [field.name, formData.get(field.name)])
+      ),
     };
+
     setEncryptedItem("conn", JSON.stringify(data));
+    dispatch(setConnectionId(connId));
     dispatch(connectDb(data));
   };
-
-  const fetchDatabases = () => {
-    if (dbConn) {
-      dispatch(queryRun("SHOW DATABASES"));
-    }
-  };
-  useEffect(() => {
-    if (dbConn) {
-      fetchDatabases();
-    }
-  }, [dbConn]);
 
   const modalStyle = {
     position: "absolute",

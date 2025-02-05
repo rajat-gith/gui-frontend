@@ -27,7 +27,7 @@ const QueryOutput = ({ userQuery }) => {
         ) : userQuery?.error ? (
           `Error: ${userQuery.error.data.data}`
         ) : userQuery?.data ? (
-          <QueryDataTable data={userQuery.data?.data} />
+          <QueryDataTable data={userQuery.data?.data[1]} />
         ) : (
           "No Output found"
         )}

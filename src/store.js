@@ -6,6 +6,8 @@ import {
   queryRunReducer,
   dbDisConnectReducer,
   generateQueryReducer,
+  connectionReducer,
+  currentDbReducer,
 } from "./reducers/DBReducer";
 
 const reducer = combineReducers({
@@ -15,6 +17,8 @@ const reducer = combineReducers({
   queryRun: queryRunReducer,
   disconnectDb: dbDisConnectReducer,
   generateQuery: generateQueryReducer,
+  connection: connectionReducer,
+  currentDB: currentDbReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

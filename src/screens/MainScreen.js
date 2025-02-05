@@ -52,36 +52,18 @@ const MainScreen = () => {
   };
 
   const { systemQuery, userQuery } = useSelector((state) => state.queryRun);
+  const connId = useSelector((state) => state.connection?.connId);
 
-  const [isDbConnected, setIsDbConnected] = useState(
-    localStorage.getItem("isDbConnected")
-  );
-
-  useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === "isDbConnected") {
-        setIsDbConnected(event.newValue);
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("isDbConnected changed:", isDbConnected);
-  }, [isDbConnected]);
   useEffect(() => {
     if (!systemQuery?.data) return;
-    const data = systemQuery.data?.data;
+    const data = systemQuery?.data?.data;
     if (data[0] && Object.keys(data[0])[0] === "Database") {
       setDbs(data);
     }
 
     if (data[0] && Object.keys(data[0])[0].split("_")[0] === "Tables") {
       const dbName = Object.keys(data[0])[0].split("_").slice(2).join("_");
-      setTablesMap((prev) => ({
+      setTablesMap((prev) => ({ 
         ...prev,
         [dbName]: data,
       }));
@@ -89,13 +71,14 @@ const MainScreen = () => {
   }, [systemQuery]);
 
   const handleReloadDb = () => {
-    dispatch(queryRun("SHOW DATABASES"));
+    dispatch(queryRun("SHOW DATABASES", connId));
   };
 
-  const handleDisconnect = () => {
-    setIsDbConnected(false);
-    localStorage.setItem("isDbConnected", "false");
-    dispatch(disconnectDb());
+  const  handleDisconnect = () => {
+    setIsConnected(false);
+    // localStorage.setItem("isDbConnected", "false");
+    localStorage.removeItem("isDbConnected");
+    dispatch(disconnectDb(connId));
     setDbs(null);
     setTablesMap({});
     setSelectedDb(null);
@@ -109,12 +92,9 @@ const MainScreen = () => {
 
   const handleDbClick = (db) => {
     setSelectedDb(db["Database"]);
-    dispatch(queryRun(`SHOW TABLES FROM ${db["Database"]}`));
+    dispatch(queryRun(`SHOW TABLES FROM ${db["Database"]}`, connId));
     let connDetails = JSON.parse(getDecryptedItem("conn"));
     connDetails["database"] = db["Database"];
-    if (Object.keys(connDetails).length > 0) {
-      dispatch(connectDb(connDetails));
-    }
   };
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -155,10 +135,15 @@ const MainScreen = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+  useEffect(() => {
+    console.log(
+      "isConnected updated:",
+      Boolean(isConnected === true),
+      isConnected
+    );
+  }, [isConnected]);
   return (
     <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <ConnectionMonitor />
       <Box
         sx={{
           padding: "16px",
@@ -170,12 +155,12 @@ const MainScreen = () => {
           gap: 2,
         }}
       >
-        {isMobile && isDbConnected === "true" && (
+        {isMobile && isConnected === true && (
           <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <MenuIcon style={{ color: "white" }} />
           </IconButton>
         )}
-        {isDbConnected === "true" ? (
+        {isConnected === true ? (
           <Button
             variant="contained"
             color="secondary"
@@ -218,7 +203,7 @@ const MainScreen = () => {
           overflow: "hidden",
         }}
       >
-        {isDbConnected && (
+        {isConnected && (
           <Box
             sx={{
               width: { xs: "100%", md: "250px" },
@@ -243,7 +228,7 @@ const MainScreen = () => {
               onReload={handleReloadDb}
               onDbClick={handleDbClick}
               onTableClick={handleTableCLick}
-              isDbConnected={isDbConnected}
+              isDbConnected={isConnected}
             />
           </Box>
         )}
@@ -266,9 +251,11 @@ const MainScreen = () => {
           }}
         >
           <QueryEditor
-            isDbConnected={isDbConnected}
+            isDbConnected={isConnected}
             userQuery={userQuery}
             dispatch={dispatch}
+            connId={connId}
+            currentDb={selectedDb}
           />
           <QueryHelper
             isTableSelected={suggestQueryTable.length > 0}

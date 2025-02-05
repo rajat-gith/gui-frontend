@@ -1,8 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { queryRun } from "../actions/DBActions";
+import { useSelector } from "react-redux";
 
-const QueryEditor = ({ isDbConnected, userQuery, dispatch }) => {
+const QueryEditor = ({
+  isDbConnected,
+  userQuery,
+  dispatch,
+  connId,
+  currentDb,
+}) => {
   const [query, setQuery] = useState("");
   const textFieldRef = useRef(null);
 
@@ -16,9 +23,10 @@ const QueryEditor = ({ isDbConnected, userQuery, dispatch }) => {
         textArea.selectionEnd
       );
 
-      const queryToExecute = selectedText.trim() || query.trim();
+      let queryToExecute = selectedText.trim() || query.trim();
       if (queryToExecute) {
-        dispatch(queryRun(queryToExecute));
+        queryToExecute = `USE ${currentDb}; ${queryToExecute}`;
+        dispatch(queryRun(queryToExecute, connId));
       }
     } else {
       console.error("Text area reference is not available.");
@@ -46,7 +54,7 @@ const QueryEditor = ({ isDbConnected, userQuery, dispatch }) => {
         variant="contained"
         color="primary"
         onClick={handleQueryExecute}
-        disabled={userQuery?.loading || !(isDbConnected === "true")}
+        disabled={userQuery?.loading || !(isDbConnected === true)}
         sx={{ marginBottom: "16px" }}
       >
         Execute Query

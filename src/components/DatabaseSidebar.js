@@ -12,8 +12,7 @@ const DatabaseSidebar = ({
   isDbConnected,
 }) => {
   const { loading, dbConn } = useSelector((state) => state.connectDb);
-  useEffect(() => {
-  }, [isDbConnected]);
+  useEffect(() => {}, [isDbConnected]);
   return (
     <Box
       sx={{
@@ -22,7 +21,7 @@ const DatabaseSidebar = ({
         color: "var(--primary-text-color)",
         height: "100%",
         p: 2,
-        display: isDbConnected === "true" ? "box" : "none",
+        display: isDbConnected === true ? "box" : "none",
         overflowY: "auto",
       }}
     >
@@ -30,7 +29,7 @@ const DatabaseSidebar = ({
         onClick={onReload}
         variant="contained"
         fullWidth
-        disabled={!(isDbConnected === "true")}
+        disabled={!(isDbConnected === true)}
         sx={{ mb: 2 }}
       >
         Reload Databases
