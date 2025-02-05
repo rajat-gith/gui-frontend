@@ -63,7 +63,7 @@ const MainScreen = () => {
 
     if (data[0] && Object.keys(data[0])[0].split("_")[0] === "Tables") {
       const dbName = Object.keys(data[0])[0].split("_").slice(2).join("_");
-      setTablesMap((prev) => ({ 
+      setTablesMap((prev) => ({
         ...prev,
         [dbName]: data,
       }));
@@ -74,7 +74,7 @@ const MainScreen = () => {
     dispatch(queryRun("SHOW DATABASES", connId));
   };
 
-  const  handleDisconnect = () => {
+  const handleDisconnect = () => {
     setIsConnected(false);
     // localStorage.setItem("isDbConnected", "false");
     localStorage.removeItem("isDbConnected");
@@ -267,7 +267,8 @@ const MainScreen = () => {
                 dispatch,
                 queryRun,
                 userPrompt,
-                setResult
+                setResult,
+                connId
               )
             }
             setUserPrompt={setUserPrompt}

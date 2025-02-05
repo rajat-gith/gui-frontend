@@ -2,7 +2,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
 import { generateQueryAction } from "../actions/DBActions";
 
-export const fetchResult = async (prompt, dispatch, table, setResult) => {
+export const fetchResult = async (
+  prompt,
+  dispatch,
+  table,
+  setResult,
+  connId
+) => {
   // const finalPrompt = `Give me Query to find '${prompt}' for the table. The table schema is '${JSON.stringify(
   //   tableSchema
   // )} of ${table}'`;
@@ -10,7 +16,7 @@ export const fetchResult = async (prompt, dispatch, table, setResult) => {
   try {
     if (prompt && table) {
       dispatch(
-        generateQueryAction(prompt, table, (result) => {
+        generateQueryAction(prompt, table, connId, (result) => {
           setResult(result);
         })
       );

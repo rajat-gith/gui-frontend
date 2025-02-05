@@ -6,9 +6,10 @@ export const handleQueryHelp = (
   dispatch,
   queryRun,
   userPrompt,
-  setResult
+  setResult,
+  connId
 ) => {
   if (suggestQueryDb.length && suggestQueryTable.length) {
-    fetchResult(userPrompt, dispatch, suggestQueryTable, setResult);
+    fetchResult(userPrompt, dispatch, suggestQueryTable, setResult, connId);
   }
 };

@@ -11,6 +11,7 @@ const QueryHelper = ({
   responseLoading,
   suggestQueryDb,
   suggestQueryTable,
+  connId
 }) => {
   useEffect(() => {}, [
     isTableSelected,

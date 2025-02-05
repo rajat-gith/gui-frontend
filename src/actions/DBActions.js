@@ -18,7 +18,7 @@ import {
   QUERY_SUGGESTION_REQUEST,
   SET_CONNECTION_ID,
   SET_CURRENT_DB,
-  RESET_DB_CONNECTION
+  RESET_DB_CONNECTION,
 } from "../constants/DBConstants";
 import axios from "axios";
 
@@ -167,13 +167,12 @@ export const setConnectionId = (connId) => ({
   payload: connId,
 });
 
-
 export const setCurrentDb = (db) => ({
   type: SET_CURRENT_DB,
   payload: db,
 });
 export const generateQueryAction =
-  (naturalQuery, tableName, callback = null) =>
+  (naturalQuery, tableName, connId, callback = null) =>
   async (dispatch) => {
     try {
       dispatch({
@@ -183,6 +182,7 @@ export const generateQueryAction =
       const { data } = await axios.post(`${BASE_URL}/api/generate-query`, {
         naturalQuery,
         tableName,
+        connId,
       });
 
       if (!data.query) {
